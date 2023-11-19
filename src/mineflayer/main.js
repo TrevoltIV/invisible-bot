@@ -4,16 +4,16 @@ const inventoryViewer = require('mineflayer-web-inventory')
 const bot = mineflayer.createBot({
   host: 'localhost',
   username: 'Bot', 
-  auth: 'microsoft' 
+  auth: 'microsoft',
   port: 25565,                
   version: false,             
-  password: '12345678'        
+  password: '12345678',
 })
 
 inventoryViewer(bot)
 
-bot.on('spawn', => {
-  bot.webInventory.start()
+bot.on('spawn', () => {
+  bot.inventory.start()
 });
 
 bot.on('chat', (username, message) => {
