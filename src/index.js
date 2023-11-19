@@ -1,4 +1,5 @@
 const { Client, IntentsBitField } = require('discord.js');
+require('./ticket.js');
 
 
 
@@ -12,20 +13,19 @@ const client = new Client({
     ],
 });
 
-client.on('ready', (c) => {
-    console.log(`✅ ${c.user.tag} is ready.`);
+client.on('ready', () => {
+    console.log('Bot is ready');
 });
 
-// Reply to messages
 client.on('messageCreate', (msg) => {
-    if (msg.author.bot) return;
-    console.log(msg.author.globalName + ': ' + msg.content);
-
-    if (msg.content === 'testing bot') {
-        msg.reply('Hello world');
+    if (msg.content === '!test') {
+        const channel01 = client.channels.cache.find(channel => channel.id === '1175575114973184060');
+        channel01.send('It works!');
+        console.log(client.channels.cache);
     }
 });
 
+
 client.login(
-    "MTE3NTIzMTUyMDQyOTA0Nzg2OA.GS0ZDm.rDjnv9z81HDPhwr2iIms3KahgHtz9CsOl5a1YI"
+    "MTE3NTU4MjQwMzM2NDkyOTU5Ng.GKQ6W6.rkiiV6mTWDRWrDCBLZHisZT86AvdmjJ9aOgFok"
 );
