@@ -1,31 +1,20 @@
-const { Client, IntentsBitField } = require('discord.js');
-require('./ticket.js');
+const { Client, GatewayIntentBits, EmbedBuilder, PermissionsBitField, Permissions, MessageManager, Embed, Collection } = require(`discord.js`);
+const fs = require('fs');
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] }); 
+require('dotenv').config();
 
+client.commands = new Collection();
 
+const functions = fs.readdirSync("./src/functions").filter(file => file.endsWith(".js"));
+const eventFiles = fs.readdirSync("./src/events").filter(file => file.endsWith(".js"));
+const commandFolders = fs.readdirSync("./src/commands");
 
-
-const client = new Client({
-    intents: [
-        IntentsBitField.Flags.Guilds,
-        IntentsBitField.Flags.GuildMembers,
-        IntentsBitField.Flags.GuildMessages,
-        IntentsBitField.Flags.MessageContent,
-    ],
-});
-
-client.on('ready', () => {
-    console.log('Bot is ready');
-});
-
-client.on('messageCreate', (msg) => {
-    if (msg.content === '!test') {
-        const channel01 = client.channels.cache.find(channel => channel.id === '1175575114973184060');
-        channel01.send('It works!');
-        console.log(client.channels.cache);
+(async () => {
+    for (file of functions) {
+        require(`./functions/${file}`)(client);
     }
-});
+    client.handleEvents(eventFiles, "./src/events");
+    client.handleCommands(commandFolders, "./src/commands");
+    client.login(process.env.token)
+})();
 
-
-client.login(
-    "MTE3NTU4MjQwMzM2NDkyOTU5Ng.GKQ6W6.rkiiV6mTWDRWrDCBLZHisZT86AvdmjJ9aOgFok"
-);

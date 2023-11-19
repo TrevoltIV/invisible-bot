@@ -1,15 +1,16 @@
 {
+  "dependencies": {
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.3.1",
+    "mineflayer": "^4.14.0"
+  },
   "name": "invisible-bot",
   "version": "1.0.0",
-  "description": "",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node src/index.js"
   },
-  "keywords": [],
-  "author": "",
+  "author": "TrevoltIV",
   "license": "ISC",
-  "dependencies": {
-    "discord.js": "^14.14.1"
-  }
+  "description": ""
 }
