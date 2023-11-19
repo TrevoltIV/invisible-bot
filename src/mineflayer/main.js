@@ -1,4 +1,5 @@
 const mineflayer = require('mineflayer')
+const inventoryViewer = require('mineflayer-web-inventory')
 
 const bot = mineflayer.createBot({
   host: 'localhost',
@@ -8,6 +9,12 @@ const bot = mineflayer.createBot({
   version: false,             
   password: '12345678'        
 })
+
+inventoryViewer(bot)
+
+bot.on('spawn', => {
+  bot.webInventory.start()
+});
 
 bot.on('chat', (username, message) => {
   if (username === bot.username) return
