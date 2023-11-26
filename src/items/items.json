@@ -1,0 +1,275 @@
+{
+    "item_1": {
+        "name": "FarGlow's Exploration Kit",
+        "price": 0.40,
+        "inventory": 80,
+        "chest_pos": "will add this later",
+        "category": "Survival Kits"
+    },
+    "item_2": {
+        "name": "Helmet",
+        "price": 0.40,
+        "inventory": 0,
+        "chest_pos": "will add this later",
+        "category": "Armor/Tools"
+    },
+    "item_3": {
+        "name": "Chestplate",
+        "price": 0.40,
+        "inventory": 0,
+        "chest_pos": "will add this later",
+        "category": "Armor/Tools"
+    },
+    "item_4": {
+        "name": "Leggings",
+        "price": 0.40,
+        "inventory": 0,
+        "chest_pos": "will add this later",
+        "category": "Armor/Tools"
+    },
+    "item_5": {
+        "name": "Boots",
+        "price": 0.40,
+        "inventory": 0,
+        "chest_pos": "will add this later",
+        "category": "Armor/Tools"
+    },
+    "item_6": {
+        "name": "Sword",
+        "price": 0.40,
+        "inventory": 0,
+        "chest_pos": "will add this later",
+        "category": "Armor/Tools"
+    },
+    "item_7": {
+        "name": "Silk Touch Pickaxe",
+        "price": 0.40,
+        "inventory": 0,
+        "chest_pos": "will add this later",
+        "category": "Armor/Tools"
+    },
+    "item_8": {
+        "name": "Pickaxe",
+        "price": 0.40,
+        "inventory": 0,
+        "chest_pos": "will add this later",
+        "category": "Armor/Tools"
+    },
+    "item_9": {
+        "name": "Flint & Steel",
+        "price": 0.40,
+        "inventory": 12,
+        "chest_pos": "will add this later",
+        "category": "Armor/Tools"
+    },
+    "item_10": {
+        "name": "Log Kit",
+        "price": 0.40,
+        "inventory": 50,
+        "chest_pos": "will add this later",
+        "category": "Building"
+    },
+    "item_11": {
+        "name": "Quartz Kit",
+        "price": 0.40,
+        "inventory": 54,
+        "chest_pos": "will add this later",
+        "category": "Building"
+    },
+    "item_12": {
+        "name": "Stone",
+        "price": 0.40,
+        "inventory": 10,
+        "chest_pos": "will add this later",
+        "category": "Building"
+    },
+    "item_13": {
+        "name": "Oak Leaves",
+        "price": 0.40,
+        "inventory": 10,
+        "chest_pos": "will add this later",
+        "category": "Building"
+    },
+    "item_14": {
+        "name": "Beacon",
+        "price": 0.40,
+        "inventory": 20,
+        "chest_pos": "will add this later",
+        "category": "Building"
+    },
+    "item_15": {
+        "name": "Packed Ice",
+        "price": 0.40,
+        "inventory": 2,
+        "chest_pos": "will add this later",
+        "category": "Building"
+    },
+    "item_16": {
+        "name": "Nether Bricks",
+        "price": 0.40,
+        "inventory": 2,
+        "chest_pos": "will add this later",
+        "category": "Building"
+    },
+    "item_17": {
+        "name": "Soul Sand",
+        "price": 0.40,
+        "inventory": 3,
+        "chest_pos": "will add this later",
+        "category": "Building"
+    },
+    "item_18": {
+        "name": "Obsidian",
+        "price": 0.40,
+        "inventory": 0,
+        "chest_pos": "will add this later",
+        "category": "Building"
+    },
+    "item_19": {
+        "name": "Red Sand",
+        "price": 0.40,
+        "inventory": 2,
+        "chest_pos": "will add this later",
+        "category": "Building"
+    },
+    "item_20": {
+        "name": "Raid Kit",
+        "price": 0.40,
+        "inventory": 10,
+        "chest_pos": "will add this later",
+        "category": "Grief Kits"
+    },
+    "item_21": {
+        "name": "Totem",
+        "price": 0.40,
+        "inventory": 20,
+        "chest_pos": "will add this later",
+        "category": "Specific Items"
+    },
+    "item_22": {
+        "name": "Enchanted Golden Apple",
+        "price": 0.40,
+        "inventory": 50,
+        "chest_pos": "will add this later",
+        "category": "Specific Items"
+    },
+    "item_23": {
+        "name": "XP Bottle",
+        "price": 0.40,
+        "inventory": 54,
+        "chest_pos": "will add this later",
+        "category": "Specific Items"
+    },
+    "item_24": {
+        "name": "Potion of Swiftness",
+        "price": 0.40,
+        "inventory": 15,
+        "chest_pos": "will add this later",
+        "category": "Specific Items"
+    },
+    "item_25": {
+        "name": "Ender Pearl",
+        "price": 0.40,
+        "inventory": 20,
+        "chest_pos": "will add this later",
+        "category": "Specific Items"
+    },
+    "item_26": {
+        "name": "Firework Rocket",
+        "price": 0.40,
+        "inventory": 50,
+        "chest_pos": "will add this later",
+        "category": "Specific Items"
+    },
+    "item_27": {
+        "name": "Chest",
+        "price": 0.40,
+        "inventory": 10,
+        "chest_pos": "will add this later",
+        "category": "Specific Items"
+    },
+    "item_28": {
+        "name": "Dragon Head",
+        "price": 0.50,
+        "inventory": 10,
+        "chest_pos": "will add this later",
+        "category": "Specialty Items"
+    },
+    "item_29": {
+        "name": "Wither Skeleton Skull",
+        "price": 0.40,
+        "inventory": 15,
+        "chest_pos": "will add this later",
+        "category": "Specialty Items"
+    },
+    "item_30": {
+        "name": "Zombie Head",
+        "price": 0.40,
+        "inventory": 10,
+        "chest_pos": "will add this later",
+        "category": "Specialty Items"
+    },
+    "item_31": {
+        "name": "Skeleton Head",
+        "price": 0.40,
+        "inventory": 10,
+        "chest_pos": "will add this later",
+        "category": "Specialty Items"
+    },
+    "item_32": {
+        "name": "Creeper Head",
+        "price": 0.40,
+        "inventory": 15,
+        "chest_pos": "will add this later",
+        "category": "Specialty Items"
+    },
+    "item_33": {
+        "name": "FarGlow's FarLands Kit",
+        "price": 0.20,
+        "inventory": 125,
+        "chest_pos": "will add this later",
+        "category": "Discount Kits"
+    },
+    "item_34": {
+        "name": "FarGlow's 2k2k Kit",
+        "price": 0.15,
+        "inventory": 45,
+        "chest_pos": "will add this later",
+        "category": "Discount Kits"
+    },
+    "item_35": {
+        "name": "FarGlow's Smol Spawn Kit",
+        "price": 0.20,
+        "inventory": 54,
+        "chest_pos": "will add this later",
+        "category": "Discount Kits"
+    },
+    "item_36": {
+        "name": "FarGlow's Reliquien Kit",
+        "price": 0.30,
+        "inventory": 60,
+        "chest_pos": "will add this later",
+        "category": "Discount Kits"
+    },
+    "item_37": {
+        "name": "Nature Kit",
+        "price": 0.40,
+        "inventory": 54,
+        "chest_pos": "will add this later",
+        "category": "Misc"
+    },
+    "item_38": {
+        "name": "Cake",
+        "price": 0.30,
+        "inventory": 30,
+        "chest_pos": "will add this later",
+        "category": "Misc"
+    },
+    "item_39": {
+        "name": "Hunger Kit",
+        "price": 0.40,
+        "inventory": 10,
+        "chest_pos": "will add this later",
+        "category": "Misc"
+    }
+}

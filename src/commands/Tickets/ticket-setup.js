@@ -12,14 +12,14 @@ module.exports = {
     async execute(interaction) {
 
         const embed = new EmbedBuilder()
-        .setTitle('Contact Support')
-        .setDescription('Create a ticket')
+        .setTitle('Checkout')
+        .setDescription('Open a checkout ticket to place order')
         .setColor('Blue')
         
         const ticketBtn = new ButtonBuilder()
         .setCustomId('ticketBtn')
-        .setLabel('Create Ticket')
-        .setEmoji('📩')
+        .setLabel('Checkout')
+        .setEmoji('✅')
         .setStyle(ButtonStyle.Secondary)
 
         const row = new ActionRowBuilder()

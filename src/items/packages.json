@@ -1,0 +1,12 @@
+{
+    "package_1": {
+        "name": "Starter Essentials Pack",
+        "price": 5,
+        "items": [
+            "item_1",
+            "item_2",
+            "item_3",
+            "item_4"
+        ]
+    }
+}
