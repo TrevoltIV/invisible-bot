@@ -22,87 +22,78 @@ var tickets = []
 
 client.on(Events.InteractionCreate, async interaction => {
     if (interaction.isButton() && interaction.customId === 'ticketBtn') {
-        const modal = new ModalBuilder()
-        .setCustomId('ticketModal')
-        .setTitle('Support Ticket')
 
-        const topicInput = new TextInputBuilder()
-        .setCustomId('topic')
-        .setLabel('Topic')
-        .setStyle(TextInputStyle.Short)
-        .setPlaceholder('What is the topic of your issue?')
-        .setMinLength(3)
-        .setMaxLength(25)
-        .setRequired(true)
+        const customer = interaction.user.username
 
-        const issueInput = new TextInputBuilder()
-        .setCustomId('issue')
-        .setLabel('Issue')
-        .setStyle(TextInputStyle.Short)
-        .setPlaceholder('What is the issue?')
-        .setMinLength(15)
-        .setMaxLength(250)
-        .setRequired(true)
+        // Path to customer's cart file
+        const filePath = `./src/customer-carts/${customer}.json`
 
-        const firstActionRow = new ActionRowBuilder().addComponents(topicInput)
-        const secondActionRow = new ActionRowBuilder().addComponents(issueInput)
+        // Read customer cart file
+        fs.readFile(filePath, 'utf8', async (err, data) => {
+            if (err) {
+                console.error('Error reading the file:', err)
+            } else {
+                try {
+                    const cartData = JSON.parse(data)
 
-        modal.addComponents(firstActionRow, secondActionRow)
-        await interaction.showModal(modal)
-    } else if (interaction.isModalSubmit()) {
-        
-        const topic = interaction.fields.getTextInputValue('topic')
-        const issue = interaction.fields.getTextInputValue('issue')
+                    // Create new channel for the ticket
+                    const channel = await interaction.guild.channels.create({
+                        name: `ticket-${interaction.user.username}`,
+                        type: ChannelType.GuildText,
+                        parent: '1175574875369386064',
+                        permissionOverwrites: [
+                            {
+                                id: interaction.guild.id,
+                                deny: [PermissionsBitField.Flags.ViewChannel] // Deny access to other users that are not the customer
+                            },
+                            {
+                                id: interaction.user.id,
+                                allow: [PermissionsBitField.Flags.ViewChannel] // Allow access to the customer
+                            }
+                        ]
+                    })
 
-        const channel = await interaction.guild.channels.create({
-            name: `ticket-${interaction.user.username}`,
-            type: ChannelType.GuildText,
-            parent: '1175574875369386064',
-            permissionOverwrites: [
-                {
-                    id: interaction.guild.id,
-                    deny: [PermissionsBitField.Flags.ViewChannel]
-                },
-                {
-                    id: interaction.user.id,
-                    id: '1175575202151809105',
-                    allow: [PermissionsBitField.Flags.ViewChannel]
+                    // Message to confirm contents of the cart
+                    const embed = new EmbedBuilder()
+                        .setTitle('Order Started')
+                        .setDescription('Please double-check that the order is correct.')
+                        .setTimestamp()
+                        .setFooter({ text: 'Ticket created' })
+                        .addFields(
+                            { name: 'User', value: `\`\`\`${customer}\`\`\`` },
+                            { name: 'Cart', value: `\`\`\`${cartData.item_ids.map(itemId => {
+                                return itemId // Display cart items in new channel
+                            })}\`\`\`` }
+                        )
+
+                    // Close ticket button
+                    const closeBtn = new ButtonBuilder()
+                        .setEmoji('❌')
+                        .setLabel('Close Ticket')
+                        .setStyle(ButtonStyle.Primary)
+                        .setCustomId('closeTicket')
+
+                    // Ping staff button
+                    const pingBtn = new ButtonBuilder()
+                        .setLabel('Ping Staff')
+                        .setStyle(ButtonStyle.Secondary)
+                        .setCustomId('pingStaff')
+
+                    const row = new ActionRowBuilder().addComponents(closeBtn, pingBtn)
+
+                    await channel.send({ embeds: [embed], components: [row] })
+
+                    await interaction.reply({
+                        content: `${interaction.user.tag}, your order has been successfully started! You can view it here ${channel}`,
+                        ephemeral: true
+                    });
+                } catch (parseError) {
+                    console.error('Error parsing JSON data:', parseError);
                 }
-            ]
-        })
-
-        const embed = new EmbedBuilder()
-        .setTitle('Ticket Opened')
-        .setDescription('Ticket created, please wait for a staff member to respond')
-        .setTimestamp()
-        .setFooter({ text: 'Ticket Created At' })
-        .addFields(
-            { name: 'User', value: `\`\`\`${interaction.user.username}\`\`\`` },
-            { name: 'Topic', value: `\`\`\`${topic}\`\`\`` },
-            { name: 'Issue', value: `\`\`\`${issue}\`\`\`` }
-        )
-
-        const closeBtn = new ButtonBuilder()
-        .setEmoji('❌')
-        .setLabel('Close Ticket')
-        .setStyle(ButtonStyle.Primary)
-        .setCustomId('closeTicket')
-
-        const pingBtn = new ButtonBuilder()
-        .setLabel('Ping Staff')
-        .setStyle(ButtonStyle.Secondary)
-        .setCustomId('pingStaff')
-
-        const row = new ActionRowBuilder().addComponents(closeBtn, pingBtn)
-
-        await channel.send({ embeds: [embed], components: [row] })
-
-        await interaction.reply({
-            content: `${interaction.user.tag}, your ticket has been successfully created! You can view it here ${channel}`,
-            ephemeral: true
-        })
+            }
+        });
     }
-})
+});
 
 client.on(Events.InteractionCreate, async interaction => {
     if (interaction.isButton() && interaction.customId === 'closeTicket') {
