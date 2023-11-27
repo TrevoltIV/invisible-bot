@@ -1,6 +1,6 @@
 const fs = require('fs');
 require('dotenv').config();
-const { Client, GatewayIntentBits, EmbedBuilder, PermissionsBitField, Collection, Events, ModalBuilder, ButtonBuilder, ButtonStyle, TextInputBuilder, TextInputStyle, ActionRowBuilder, ChannelType } = require(`discord.js`);
+const { Client, GatewayIntentBits, EmbedBuilder, PermissionsBitField, Collection, Events, ModalBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ButtonBuilder, ButtonStyle, TextInputBuilder, TextInputStyle, ActionRowBuilder, ChannelType } = require(`discord.js`);
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] }); 
 
 client.commands = new Collection();
@@ -81,20 +81,19 @@ client.on(Events.InteractionCreate, async interaction => {
                             { name: 'Cart', value: `\`\`\`${cartItems.join('\n')}\`\`\`` }
                         )
 
-                    // Close ticket button
+                    // Cancel order button (closes ticket and clears customer's cart)
                     const closeBtn = new ButtonBuilder()
-                        .setEmoji('❌')
                         .setLabel('Cancel Order')
-                        .setStyle(ButtonStyle.Primary)
                         .setCustomId('closeTicket')
+                        .setStyle(ButtonStyle.Danger)
 
-                    // Ping staff button
-                    const pingBtn = new ButtonBuilder()
+                    // Confirm cart contents button
+                    const confirmBtn = new ButtonBuilder()
                         .setLabel('Confirm')
-                        .setStyle(ButtonStyle.Secondary)
                         .setCustomId('confirmBtn')
+                        .setStyle(ButtonStyle.Primary)
 
-                    const row = new ActionRowBuilder().addComponents(closeBtn, pingBtn)
+                    const row = new ActionRowBuilder().addComponents(closeBtn, confirmBtn)
 
                     await channel.send({ embeds: [embed], components: [row] })
 
@@ -119,7 +118,7 @@ client.on(Events.InteractionCreate, async interaction => {
         const dmEmbed = new EmbedBuilder()
         .setTitle('Order Cancelled')
         .setDescription('Your order has been cancelled and your cart has been cleared.')
-        .setColor('Blue')
+        .setColor('Red')
         .setTimestamp()
         .setFooter({ text: `Sent from ${interaction.guild.name}` })
 
@@ -131,60 +130,95 @@ client.on(Events.InteractionCreate, async interaction => {
         const dmRow = new ActionRowBuilder()
         .addComponents(dmButton)
 
-        fs.unlinkSync(`./src/customer-carts/${interaction.user.username}.json`)
+        const customer = interaction.user.username
+
+        fs.unlinkSync(`./src/customer-carts/${customer}.json`)
+        if (fs.existsSync(`./src/orders/${customer}.json`)) {
+            fs.unlinkSync(`./src/orders/${customer}.json`)
+        }
 
         interaction.user.send({ embeds: [dmEmbed], components: [dmRow] })
         return
     }
 })
 
-// Ping Staff
+// Prompt user for necessary delivery information after confirming cart contents
 client.on(Events.InteractionCreate, async interaction => {
     if (interaction.isButton() && interaction.customId === 'confirmBtn') {
+        const userCartFile = fs.readFileSync(`./src/customer-carts/${interaction.user.username}.json`)
+        const userCart = JSON.parse(userCartFile)
 
-        const staffId = [
-            '1175575202151809105'
-        ]
+        if (userCart.item_ids.length >= 27) {
+            // This code will create a different prompt because the order is too big for bot delivery
+            console.log('Order is too big for bot delivery')
+            await interaction.reply({
+                content: `Your order is too big for instant bot delivery. I can only carry one ender chest at a time! I'll ping my boss so he can handle it. <@928898174721065000>`,
+                ephemeral: true
+            })
+        } else {
+            // Create prompt for orders that are eligible for bot delivery (27 items or less)
+            const paymentMethodInput = new StringSelectMenuBuilder()
+                .setPlaceholder('Payment method (make a selection)')
+                .setCustomId('paymentMethodInput')
+                .addOptions(
+                    new StringSelectMenuOptionBuilder()
+                        .setLabel('PayPal')
+                        .setValue('paypal'),
+                    new StringSelectMenuOptionBuilder()
+                        .setLabel('Cashapp')
+                        .setValue('cashapp'),
+                    new StringSelectMenuOptionBuilder()
+                        .setLabel('Zelle')
+                        .setValue('zelle'),
+                    new StringSelectMenuOptionBuilder()
+                        .setLabel('Crypto')
+                        .setValue('crypto'),
+                    new StringSelectMenuOptionBuilder()
+                        .setLabel('Visa/Amazon gift card')
+                        .setValue('gift-card'),
+                )
+            
+            const deliveryMethodInput = new StringSelectMenuBuilder()
+                .setPlaceholder('Delivery method (make a selection)')
+                .setCustomId('deliveryMethodInput')
+                .addOptions(
+                    new StringSelectMenuOptionBuilder()
+                        .setLabel('Instant bot pickup at spawn (you must arrive within 20 mins)')
+                        .setValue('bot'),
+                    new StringSelectMenuOptionBuilder()
+                        .setLabel('Manual dungeon chest delivery (may take up to 24 hours)')
+                        .setValue('manual'),
+                )
+            
+            const row1 = new ActionRowBuilder().addComponents(paymentMethodInput)
+            const row2 = new ActionRowBuilder().addComponents(deliveryMethodInput)
 
-        const roleMention = staffId.map(id => `<@${id}>`).join(' ')
-        const msgContent = `${roleMention}`
-
-        const embed = new EmbedBuilder()
-        .setTitle('Staff Pinged')
-        .setDescription('The staff have been pinged please wait 2-4 hours')
-        .setColor('Blue')
-        .setTimestamp()
-        .setFooter({ text: 'Staff Pinged At' })
-
-        await interaction.channel.send({
-            content: msgContent,
-            embeds: [embed]
-        })
-
-        await interaction.reply({
-            content: 'You have successfully pinged staff.',
-            ephemeral: true
-        })
+            await interaction.reply({
+                content: 'Please fill out the below fields:',
+                components: [row1, row2],
+                ephemeral: true
+            })
+        }
     }
 })
 
 // Add to cart
 client.on('interactionCreate', async interaction => {
-    if (!interaction.isButton()) return;
+    if (!interaction.isButton()) return
 
-    const customId = interaction.customId;
-    const customer = interaction.user.username;
-    const item = interaction.customId.slice(13);
+    const customId = interaction.customId
+    const customer = interaction.user.username
+    const item = interaction.customId.slice(13)
 
     if (customId.startsWith('addToCartBtn')) {
-        const filePath = `./src/customer-carts/${customer}.json`;
+        const filePath = `./src/customer-carts/${customer}.json`
 
         if (fs.existsSync(filePath)) {
             // User has an existing cart file
-            const fileContent = fs.readFileSync(filePath, 'utf8');
-            let data = JSON.parse(fileContent);
+            const fileContent = fs.readFileSync(filePath, 'utf8')
+            let data = JSON.parse(fileContent)
 
-            data.item_ids.push(item);
+            data.item_ids.push(item)
 
             fs.writeFileSync(filePath, JSON.stringify(data, null, 2))
         } else {
@@ -203,3 +237,101 @@ client.on('interactionCreate', async interaction => {
         })
     }
 });
+
+// Handle prompt payment method input
+client.on('interactionCreate', async interaction => {
+    if (!interaction.isStringSelectMenu()) return
+
+    const customId = interaction.customId
+    const customer = interaction.user.username
+    
+    if (customId === 'paymentMethodInput') {
+        if (fs.existsSync(`./src/orders/${customer}.json`)) {
+            // If order file already exists, edit it
+            const orderFile = fs.readFileSync(`./src/orders/${customer}.json`, 'utf8')
+            let orderData = JSON.parse(orderFile)
+
+            orderData.payment_method = interaction.values[0]
+            fs.writeFileSync(`./src/orders/${customer}.json`, JSON.stringify(orderData, null, 2), 'utf8')
+
+            const reply = await interaction.reply({
+                content: `Payment method: ${interaction.values[0]}`,
+                ephemeral: true
+            })
+
+            setTimeout(() => {
+                reply.delete()
+            }, 5000)
+        } else {
+            // If order file doesnt already exist, create it and set payment method property
+            const orderData = {
+                ign: null,
+                total: 0,
+                payment_method: interaction.values[0],
+                delivery_method: null,
+                paid: false,
+                items: []
+            }
+
+            fs.writeFileSync(`./src/orders/${customer}.json`, JSON.stringify(orderData, null, 2), 'utf8')
+
+            const reply = await interaction.reply({
+                content: `Payment method: ${interaction.values[0]}`,
+                ephemeral: true
+            })
+
+            setTimeout(() => {
+                reply.delete()
+            }, 5000)
+        }
+    }
+})
+
+// Handle delivery method input
+client.on('interactionCreate', async interaction => {
+    if (!interaction.isStringSelectMenu()) return
+
+    const customId = interaction.customId
+    const customer = interaction.user.username
+    
+    if (customId === 'deliveryMethodInput') {
+        if (fs.existsSync(`./src/orders/${customer}.json`)) {
+            // If order file already exists, edit it
+            const orderFile = fs.readFileSync(`./src/orders/${customer}.json`, 'utf8')
+            let orderData = JSON.parse(orderFile)
+
+            orderData.delivery_method = interaction.values[0]
+            fs.writeFileSync(`./src/orders/${customer}.json`, JSON.stringify(orderData, null, 2), 'utf8')
+
+            const reply = await interaction.reply({
+                content: `Delivery method: ${interaction.values[0]}`,
+                ephemeral: true
+            })
+
+            setTimeout(() => {
+                reply.delete()
+            }, 5000)
+        } else {
+            // If order file doesnt already exist, create it and set payment method property
+            const orderData = {
+                ign: null,
+                total: 0,
+                payment_method: null,
+                delivery_method: interaction.values[0],
+                paid: false,
+                items: []
+            }
+
+            fs.writeFileSync(`./src/orders/${customer}.json`, JSON.stringify(orderData, null, 2), 'utf8')
+
+            const reply = await interaction.reply({
+                content: `Delivery method: ${interaction.values[0]}`,
+                ephemeral: true
+            })
+
+            setTimeout(() => {
+                reply.delete()
+            }, 5000)
+        }
+    }
+})
