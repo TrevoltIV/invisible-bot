@@ -194,7 +194,7 @@ client.on(Events.InteractionCreate, async interaction => {
             const row2 = new ActionRowBuilder().addComponents(deliveryMethodInput)
 
             await interaction.reply({
-                content: 'Please fill out the below fields:',
+                content: 'Please fill out the below fields (NOTE: Bot delivery is currently in development and not available yet)',
                 components: [row1, row2],
                 ephemeral: true
             })
