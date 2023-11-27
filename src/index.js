@@ -254,14 +254,33 @@ client.on('interactionCreate', async interaction => {
             orderData.payment_method = interaction.values[0]
             fs.writeFileSync(`./src/orders/${customer}.json`, JSON.stringify(orderData, null, 2), 'utf8')
 
-            const reply = await interaction.reply({
-                content: `Payment method: ${interaction.values[0]}`,
-                ephemeral: true
-            })
+            if (orderData.delivery_method) {
 
-            setTimeout(() => {
-                reply.delete()
-            }, 5000)
+                await interaction.channel.send({
+                    content: `Payment method: ${orderData.payment_method}`
+                })
+
+                // Trigger next prompt (modal) if both inputs are filled
+                const modal = new ModalBuilder()
+                    .setCustomId('ignModal')
+                    .setTitle('Minecraft Username')
+                
+                const ignInput = new TextInputBuilder()
+                    .setCustomId('ignInput')
+                    .setLabel('Your Minecraft username:')
+                    .setStyle(TextInputStyle.Short)
+                    .setRequired(true)
+                
+                const row = new ActionRowBuilder().addComponents(ignInput)
+                modal.addComponents(row)
+
+                await interaction.showModal(modal)
+            } else {
+                // Send notification that input selection was successful
+                await interaction.reply({
+                    content: `Payment method: ${interaction.values[0]}`
+                })
+            }
         } else {
             // If order file doesnt already exist, create it and set payment method property
             const orderData = {
@@ -275,14 +294,9 @@ client.on('interactionCreate', async interaction => {
 
             fs.writeFileSync(`./src/orders/${customer}.json`, JSON.stringify(orderData, null, 2), 'utf8')
 
-            const reply = await interaction.reply({
-                content: `Payment method: ${interaction.values[0]}`,
-                ephemeral: true
+            await interaction.reply({
+                content: `Payment method: ${interaction.values[0]}`
             })
-
-            setTimeout(() => {
-                reply.delete()
-            }, 5000)
         }
     }
 })
@@ -303,14 +317,33 @@ client.on('interactionCreate', async interaction => {
             orderData.delivery_method = interaction.values[0]
             fs.writeFileSync(`./src/orders/${customer}.json`, JSON.stringify(orderData, null, 2), 'utf8')
 
-            const reply = await interaction.reply({
-                content: `Delivery method: ${interaction.values[0]}`,
-                ephemeral: true
-            })
+            if (orderData.payment_method) {
 
-            setTimeout(() => {
-                reply.delete()
-            }, 5000)
+                await interaction.channel.send({
+                    content: `Delivery method: ${interaction.values[0]}`
+                })
+
+                // Trigger next prompt (modal) if both inputs are filled
+                const modal = new ModalBuilder()
+                    .setCustomId('ignModal')
+                    .setTitle('Minecraft Username')
+                
+                const ignInput = new TextInputBuilder()
+                    .setCustomId('ignInput')
+                    .setLabel('Your Minecraft username:')
+                    .setStyle(TextInputStyle.Short)
+                    .setRequired(true)
+                
+                const row = new ActionRowBuilder().addComponents(ignInput)
+                modal.addComponents(row)
+
+                await interaction.showModal(modal)
+            } else {
+                // Send notification that input selection was successful
+                await interaction.reply({
+                    content: `Delivery method: ${interaction.values[0]}`
+                })
+            }
         } else {
             // If order file doesnt already exist, create it and set payment method property
             const orderData = {
@@ -324,14 +357,79 @@ client.on('interactionCreate', async interaction => {
 
             fs.writeFileSync(`./src/orders/${customer}.json`, JSON.stringify(orderData, null, 2), 'utf8')
 
-            const reply = await interaction.reply({
-                content: `Delivery method: ${interaction.values[0]}`,
-                ephemeral: true
+            await interaction.reply({
+                content: `Delivery method: ${interaction.values[0]}`
             })
-
-            setTimeout(() => {
-                reply.delete()
-            }, 5000)
         }
     }
+})
+
+// Handle IGN input
+client.on('interactionCreate', async interaction => {
+    if (!interaction.isModalSubmit()) return
+
+    const customId = interaction.customId
+    const customer = interaction.user.username
+
+    if (customId === 'ignModal') {
+        const orderFile = fs.readFileSync(`./src/orders/${customer}.json`)
+        const orderData = JSON.parse(orderFile)
+
+        orderData.ign = interaction.fields.getTextInputValue('ignInput')
+        fs.writeFileSync(`./src/orders/${customer}.json`, JSON.stringify(orderData, null, 2), 'utf8')
+
+        await interaction.channel.send({
+            content: `IGN: ${interaction.fields.getTextInputValue('ignInput')}`
+        })
+
+        // Trigger next prompt
+
+        switch (orderData.payment_method) {
+            case "paypal":
+                await interaction.reply({
+                    content: `Send $${orderData.total} using this PayPal link: https://www.paypal.me/Trevolt1, then type "done"`,
+                    ephemeral: true
+                })
+                break
+            case "cashapp":
+                await interaction.reply({
+                    content: `Send $${orderData.total} to: $karstenkoer on Cashapp, then type "done"`,
+                    ephemeral: true
+                })
+                break
+            case "zelle":
+                await interaction.reply({
+                    content: `Send $${orderData.total} to (404) 695-6774 on Zelle, then type "done"`,
+                    ephemeral: true
+                })
+                break
+            case "crypto":
+                await interaction.reply({
+                    content: `
+                        Send $${orderData.total} to one of the following crypto addresses, then type "done":\n
+                        Bitcoin: CURRENTLY DISABLED\n
+                        Ethereum: CURRENTLY DISABLED\n
+                        BTC Cash: CURRENTLY DISABLED\n
+                    `,
+                    ephemeral: true
+                })
+                break
+            case "gift-card":
+                await interaction.reply({
+                    content: `Send the gift card information in this channel, then type "done". (Note that only Visa and Amazon cards are accepted)`,
+                    ephemeral: true
+                })
+                break
+            default:
+                await interaction.reply({
+                    content: 'Server error: Payment method unknown.'
+                })
+                break
+        }
+    }
+})
+
+// Handle payment verification ping
+client.on('messageCreate', async interaction => {
+    // TODO: User types "done" and the bot pings Trevolt
 })
