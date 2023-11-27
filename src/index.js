@@ -20,6 +20,7 @@ const commandFolders = fs.readdirSync("./src/commands");
 
 var tickets = []
 
+// Create checkout ticket
 client.on(Events.InteractionCreate, async interaction => {
     if (interaction.isButton() && interaction.customId === 'ticketBtn') {
 
@@ -40,7 +41,7 @@ client.on(Events.InteractionCreate, async interaction => {
                     const channel = await interaction.guild.channels.create({
                         name: `ticket-${interaction.user.username}`,
                         type: ChannelType.GuildText,
-                        parent: '1175574875369386064',
+                        parent: '1175554226097750096',
                         permissionOverwrites: [
                             {
                                 id: interaction.guild.id,
@@ -53,6 +54,19 @@ client.on(Events.InteractionCreate, async interaction => {
                         ]
                     })
 
+                    const itemListFileContent = fs.readFileSync('./src/catalog/items.json', 'utf8')
+                    const itemList = JSON.parse(itemListFileContent)
+
+                    const cartItems = cartData.item_ids.map(itemId => {
+                        const itemName = itemList[itemId].name
+
+                        if (itemName) {
+                            return itemName
+                        } else {
+                            return `Item with ID ${itemId} not found in catalog`
+                        }
+                    })
+
                     // Message to confirm contents of the cart
                     const embed = new EmbedBuilder()
                         .setTitle('Order Started')
@@ -61,23 +75,21 @@ client.on(Events.InteractionCreate, async interaction => {
                         .setFooter({ text: 'Ticket created' })
                         .addFields(
                             { name: 'User', value: `\`\`\`${customer}\`\`\`` },
-                            { name: 'Cart', value: `\`\`\`${cartData.item_ids.map(itemId => {
-                                return itemId // Display cart items in new channel
-                            })}\`\`\`` }
+                            { name: 'Cart', value: `\`\`\`${cartItems.join('\n')}\`\`\`` }
                         )
 
                     // Close ticket button
                     const closeBtn = new ButtonBuilder()
                         .setEmoji('❌')
-                        .setLabel('Close Ticket')
+                        .setLabel('Cancel Order')
                         .setStyle(ButtonStyle.Primary)
                         .setCustomId('closeTicket')
 
                     // Ping staff button
                     const pingBtn = new ButtonBuilder()
-                        .setLabel('Ping Staff')
+                        .setLabel('Confirm')
                         .setStyle(ButtonStyle.Secondary)
-                        .setCustomId('pingStaff')
+                        .setCustomId('confirmBtn')
 
                     const row = new ActionRowBuilder().addComponents(closeBtn, pingBtn)
 
@@ -95,14 +107,15 @@ client.on(Events.InteractionCreate, async interaction => {
     }
 });
 
+// Cancel order ticket
 client.on(Events.InteractionCreate, async interaction => {
     if (interaction.isButton() && interaction.customId === 'closeTicket') {
         delete tickets[interaction.user.id]
         interaction.channel.delete()
 
         const dmEmbed = new EmbedBuilder()
-        .setTitle('Ticket Closed')
-        .setDescription('Thank you for contacting support. Your ticket has been closed.')
+        .setTitle('Order Cancelled')
+        .setDescription('Your order has been cancelled and your cart has been cleared.')
         .setColor('Blue')
         .setTimestamp()
         .setFooter({ text: `Sent from ${interaction.guild.name}` })
@@ -122,7 +135,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
 // Ping Staff
 client.on(Events.InteractionCreate, async interaction => {
-    if (interaction.isButton() && interaction.customId === 'pingStaff') {
+    if (interaction.isButton() && interaction.customId === 'confirmBtn') {
 
         const staffId = [
             '1175575202151809105'
@@ -149,3 +162,39 @@ client.on(Events.InteractionCreate, async interaction => {
         })
     }
 })
+
+// Add to cart
+client.on('interactionCreate', async interaction => {
+    if (!interaction.isButton()) return;
+
+    const customId = interaction.customId;
+    const customer = interaction.user.username;
+    const item = interaction.customId.slice(13);
+
+    if (customId.startsWith('addToCartBtn')) {
+        const filePath = `./src/customer-carts/${customer}.json`;
+
+        if (fs.existsSync(filePath)) {
+            // User has an existing cart file
+            const fileContent = fs.readFileSync(filePath, 'utf8');
+            let data = JSON.parse(fileContent);
+
+            data.item_ids.push(item);
+
+            fs.writeFileSync(filePath, JSON.stringify(data, null, 2))
+        } else {
+            // User does not have a cart file yet, create a new one
+            const data = { item_ids: [item] }
+
+            fs.writeFileSync(filePath, JSON.stringify(data, null, 2))
+        }
+
+        const itemListFileContent = fs.readFileSync(`./src/catalog/items.json`, 'utf8')
+        const itemData = JSON.parse(itemListFileContent)
+        const itemName = itemData[item].name
+        await interaction.reply({
+            content: `Added ${itemName} to your cart.`,
+            ephemeral: true
+        })
+    }
+});

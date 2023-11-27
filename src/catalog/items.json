@@ -4,272 +4,311 @@
         "price": 0.40,
         "inventory": 80,
         "chest_pos": "will add this later",
-        "category": "Survival Kits"
+        "category": "Survival Kits",
+        "image": "https://i.ibb.co/37sw4rF/image.png"
     },
     "item_2": {
         "name": "Helmet",
         "price": 0.40,
         "inventory": 0,
         "chest_pos": "will add this later",
-        "category": "Armor/Tools"
+        "category": "Armor/Tools",
+        "image": "https://i.ibb.co/kQ9S2kT/image-1.png"
     },
     "item_3": {
         "name": "Chestplate",
         "price": 0.40,
         "inventory": 0,
         "chest_pos": "will add this later",
-        "category": "Armor/Tools"
+        "category": "Armor/Tools",
+        "image": "https://i.ibb.co/CMHR6gL/image-2.png"
     },
     "item_4": {
         "name": "Leggings",
         "price": 0.40,
         "inventory": 0,
         "chest_pos": "will add this later",
-        "category": "Armor/Tools"
+        "category": "Armor/Tools",
+        "image": "https://i.ibb.co/0jjdCMs/image-3.png"
     },
     "item_5": {
         "name": "Boots",
         "price": 0.40,
         "inventory": 0,
         "chest_pos": "will add this later",
-        "category": "Armor/Tools"
+        "category": "Armor/Tools",
+        "image": "https://i.ibb.co/WpqgFBY/image-4.png"
     },
     "item_6": {
         "name": "Sword",
         "price": 0.40,
         "inventory": 0,
         "chest_pos": "will add this later",
-        "category": "Armor/Tools"
+        "category": "Armor/Tools",
+        "image": "https://i.ibb.co/Ms1Z0pv/image-5.png"
     },
     "item_7": {
         "name": "Silk Touch Pickaxe",
         "price": 0.40,
         "inventory": 0,
         "chest_pos": "will add this later",
-        "category": "Armor/Tools"
+        "category": "Armor/Tools",
+        "image": "https://i.ibb.co/sV9bHRY/image-6.png"
     },
     "item_8": {
         "name": "Pickaxe",
         "price": 0.40,
         "inventory": 0,
         "chest_pos": "will add this later",
-        "category": "Armor/Tools"
+        "category": "Armor/Tools",
+        "image": "https://i.ibb.co/sV9bHRY/image-6.png"
     },
     "item_9": {
         "name": "Flint & Steel",
         "price": 0.40,
         "inventory": 12,
         "chest_pos": "will add this later",
-        "category": "Armor/Tools"
+        "category": "Armor/Tools",
+        "image": "https://i.ibb.co/pXjD6vm/image-7.png"
     },
     "item_10": {
         "name": "Log Kit",
         "price": 0.40,
         "inventory": 50,
         "chest_pos": "will add this later",
-        "category": "Building"
+        "category": "Building",
+        "image": "https://i.ibb.co/qWcV3DN/image-8.png"
     },
     "item_11": {
         "name": "Quartz Kit",
         "price": 0.40,
         "inventory": 54,
         "chest_pos": "will add this later",
-        "category": "Building"
+        "category": "Building",
+        "image": "https://i.ibb.co/PgSkfvR/image-9.png"
     },
     "item_12": {
         "name": "Stone",
         "price": 0.40,
         "inventory": 10,
         "chest_pos": "will add this later",
-        "category": "Building"
+        "category": "Building",
+        "image": "https://i.ibb.co/NC9GL4P/image-10.png"
     },
     "item_13": {
         "name": "Oak Leaves",
         "price": 0.40,
         "inventory": 10,
         "chest_pos": "will add this later",
-        "category": "Building"
+        "category": "Building",
+        "image": "https://i.ibb.co/74PHqvB/image-11.png"
     },
     "item_14": {
         "name": "Beacon",
         "price": 0.40,
         "inventory": 20,
         "chest_pos": "will add this later",
-        "category": "Building"
+        "category": "Building",
+        "image": "https://i.ibb.co/GCjxqJL/image-12.png"
     },
     "item_15": {
         "name": "Packed Ice",
         "price": 0.40,
         "inventory": 2,
         "chest_pos": "will add this later",
-        "category": "Building"
+        "category": "Building",
+        "image": "https://i.ibb.co/Smw5X7W/image-13.png"
     },
     "item_16": {
         "name": "Nether Bricks",
         "price": 0.40,
         "inventory": 2,
         "chest_pos": "will add this later",
-        "category": "Building"
+        "category": "Building",
+        "image": "https://i.ibb.co/StT8DBX/image-14.png"
     },
     "item_17": {
         "name": "Soul Sand",
         "price": 0.40,
         "inventory": 3,
         "chest_pos": "will add this later",
-        "category": "Building"
+        "category": "Building",
+        "image": "https://i.ibb.co/6mxCjz9/image-15.png"
     },
     "item_18": {
         "name": "Obsidian",
         "price": 0.40,
         "inventory": 0,
         "chest_pos": "will add this later",
-        "category": "Building"
+        "category": "Building",
+        "image": "https://i.ibb.co/0XxYw0V/image-16.png"
     },
     "item_19": {
         "name": "Red Sand",
         "price": 0.40,
         "inventory": 2,
         "chest_pos": "will add this later",
-        "category": "Building"
+        "category": "Building",
+        "image": "https://i.ibb.co/R4sJpJ4/image-17.png"
     },
     "item_20": {
         "name": "Raid Kit",
         "price": 0.40,
         "inventory": 10,
         "chest_pos": "will add this later",
-        "category": "Grief Kits"
+        "category": "Grief Kits",
+        "image": "https://i.ibb.co/0hW8xX7/image-18.png"
     },
     "item_21": {
         "name": "Totem",
         "price": 0.40,
         "inventory": 20,
         "chest_pos": "will add this later",
-        "category": "Specific Items"
+        "category": "Specific Items",
+        "image": "https://i.ibb.co/DKRq4wY/image-19.png"
     },
     "item_22": {
         "name": "Enchanted Golden Apple",
         "price": 0.40,
         "inventory": 50,
         "chest_pos": "will add this later",
-        "category": "Specific Items"
+        "category": "Specific Items",
+        "image": "https://i.ibb.co/99RNdfR/image-20.png"
     },
     "item_23": {
         "name": "XP Bottle",
         "price": 0.40,
         "inventory": 54,
         "chest_pos": "will add this later",
-        "category": "Specific Items"
+        "category": "Specific Items",
+        "image": "https://i.ibb.co/gTbxrf1/image-21.png"
     },
     "item_24": {
         "name": "Potion of Swiftness",
         "price": 0.40,
         "inventory": 15,
         "chest_pos": "will add this later",
-        "category": "Specific Items"
+        "category": "Specific Items",
+        "image": "https://i.ibb.co/Cb5vCk6/image-22.png"
     },
     "item_25": {
         "name": "Ender Pearl",
         "price": 0.40,
         "inventory": 20,
         "chest_pos": "will add this later",
-        "category": "Specific Items"
+        "category": "Specific Items",
+        "image": "https://i.ibb.co/bJ5F6QH/image-23.png"
     },
     "item_26": {
         "name": "Firework Rocket",
         "price": 0.40,
         "inventory": 50,
         "chest_pos": "will add this later",
-        "category": "Specific Items"
+        "category": "Specific Items",
+        "image": "https://i.ibb.co/m5qgpHr/image-24.png"
     },
     "item_27": {
         "name": "Chest",
         "price": 0.40,
         "inventory": 10,
         "chest_pos": "will add this later",
-        "category": "Specific Items"
+        "category": "Specific Items",
+        "image": "https://i.ibb.co/dQhNgR0/image-25.png"
     },
     "item_28": {
         "name": "Dragon Head",
         "price": 0.50,
         "inventory": 10,
         "chest_pos": "will add this later",
-        "category": "Specialty Items"
+        "category": "Specialty Items",
+        "image": "https://i.ibb.co/vk7zYTL/image-26.png"
     },
     "item_29": {
         "name": "Wither Skeleton Skull",
         "price": 0.40,
         "inventory": 15,
         "chest_pos": "will add this later",
-        "category": "Specialty Items"
+        "category": "Specialty Items",
+        "image": "https://i.ibb.co/Xfn660F/image-27.png"
     },
     "item_30": {
         "name": "Zombie Head",
         "price": 0.40,
         "inventory": 10,
         "chest_pos": "will add this later",
-        "category": "Specialty Items"
+        "category": "Specialty Items",
+        "image": "https://i.ibb.co/2PsJTqm/image-28.png"
     },
     "item_31": {
         "name": "Skeleton Head",
         "price": 0.40,
         "inventory": 10,
         "chest_pos": "will add this later",
-        "category": "Specialty Items"
+        "category": "Specialty Items",
+        "image": "https://i.ibb.co/gdHyLnH/image-29.png"
     },
     "item_32": {
         "name": "Creeper Head",
         "price": 0.40,
         "inventory": 15,
         "chest_pos": "will add this later",
-        "category": "Specialty Items"
+        "category": "Specialty Items",
+        "image": "https://i.ibb.co/xg0mz62/image-30.png"
     },
     "item_33": {
         "name": "FarGlow's FarLands Kit",
         "price": 0.20,
         "inventory": 125,
         "chest_pos": "will add this later",
-        "category": "Discount Kits"
+        "category": "Discount Kits",
+        "image": "https://i.ibb.co/rdZ01Md/image-31.png"
     },
     "item_34": {
         "name": "FarGlow's 2k2k Kit",
         "price": 0.15,
         "inventory": 45,
         "chest_pos": "will add this later",
-        "category": "Discount Kits"
+        "category": "Discount Kits",
+        "image": "https://i.ibb.co/JpmbPD8/image-32.png"
     },
     "item_35": {
         "name": "FarGlow's Smol Spawn Kit",
         "price": 0.20,
         "inventory": 54,
         "chest_pos": "will add this later",
-        "category": "Discount Kits"
+        "category": "Discount Kits",
+        "image": "https://i.ibb.co/NCDtGkX/image-33.png"
     },
     "item_36": {
         "name": "FarGlow's Reliquien Kit",
         "price": 0.30,
         "inventory": 60,
         "chest_pos": "will add this later",
-        "category": "Discount Kits"
+        "category": "Discount Kits",
+        "image": "https://i.ibb.co/Qn0VtfT/image-34.png"
     },
     "item_37": {
         "name": "Nature Kit",
         "price": 0.40,
         "inventory": 54,
         "chest_pos": "will add this later",
-        "category": "Misc"
+        "category": "Misc",
+        "image": "https://i.ibb.co/56PRBrv/image-35.png"
     },
     "item_38": {
         "name": "Cake",
         "price": 0.30,
         "inventory": 30,
         "chest_pos": "will add this later",
-        "category": "Misc"
+        "category": "Misc",
+        "image": "https://i.ibb.co/YjrxpfG/image-36.png"
     },
     "item_39": {
         "name": "Hunger Kit",
         "price": 0.40,
         "inventory": 10,
         "chest_pos": "will add this later",
-        "category": "Misc"
+        "category": "Misc",
+        "image": "https://i.ibb.co/0G2n4B2/image-37.png"
     }
 }
