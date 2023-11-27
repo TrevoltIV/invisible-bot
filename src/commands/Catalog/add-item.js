@@ -2,7 +2,7 @@ const fs = require('fs');
 const { SlashCommandBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, PermissionsBitField, PermissionFlagsBits } = require('discord.js');
 
 
-// Create a new ticket panel (staff only)
+// Post an item from the items.json file to the catalog channels
 
 module.exports = {
     data: new SlashCommandBuilder()

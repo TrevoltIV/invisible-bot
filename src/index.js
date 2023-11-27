@@ -32,7 +32,10 @@ client.on(Events.InteractionCreate, async interaction => {
         // Read customer cart file
         fs.readFile(filePath, 'utf8', async (err, data) => {
             if (err) {
-                console.error('Error reading the file:', err)
+                await interaction.reply({
+                    content: `${interaction.user.tag}, you have no items in your cart! Please add some items before proceeding to checkout.`,
+                    ephemeral: true
+                })
             } else {
                 try {
                     const cartData = JSON.parse(data)
@@ -98,9 +101,9 @@ client.on(Events.InteractionCreate, async interaction => {
                     await interaction.reply({
                         content: `${interaction.user.tag}, your order has been successfully started! You can view it here ${channel}`,
                         ephemeral: true
-                    });
+                    })
                 } catch (parseError) {
-                    console.error('Error parsing JSON data:', parseError);
+                    console.error('Error parsing JSON data:', parseError)
                 }
             }
         });
@@ -127,6 +130,8 @@ client.on(Events.InteractionCreate, async interaction => {
 
         const dmRow = new ActionRowBuilder()
         .addComponents(dmButton)
+
+        fs.unlinkSync(`./src/customer-carts/${interaction.user.username}.json`)
 
         interaction.user.send({ embeds: [dmEmbed], components: [dmRow] })
         return
