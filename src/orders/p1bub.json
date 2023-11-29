@@ -3,6 +3,6 @@
   "total": 0,
   "payment_method": "paypal",
   "delivery_method": "bot",
-  "paid": false,
+  "paid": true,
   "items": []
 }

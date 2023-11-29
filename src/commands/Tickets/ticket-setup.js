@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, PermissionsBitField, PermissionFlagsBits } = require('discord.js');
 
 
-// Create a new ticket panel (staff only)
+// Create a new checkout ticket panel (staff only)
 
 module.exports = {
     data: new SlashCommandBuilder()

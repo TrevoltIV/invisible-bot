@@ -430,6 +430,23 @@ client.on('interactionCreate', async interaction => {
 })
 
 // Handle payment verification ping
-client.on('messageCreate', async interaction => {
-    // TODO: User types "done" and the bot pings Trevolt
+client.on('messageCreate', async msg => {
+    if (msg.channel.name !== `ticket-${msg.author.username}`) return
+
+    const content = msg.content.toLowerCase()
+
+    if (content === 'done') {
+        if (fs.existsSync(`./src/orders/${msg.author.username}.json`)) {
+            const orderFile = fs.readFileSync(`./src/orders/${msg.author.username}.json`)
+            const orderData = JSON.parse(orderFile)
+
+            if (orderData.ign !== null && orderData.payment_method !== null && orderData.delivery_method !== null) {
+                msg.channel.send('<@928898174721065000> READY FOR PAYMENT VERIFICATION')
+            } else {
+                msg.channel.send('You must fill out all fields before typing done. If this is an error, please ping Trevolt.')
+            }
+        } else {
+            msg.channel.send('You must fill out all fields before typing done. If this is an error, please ping Trevolt.')
+        }
+    }
 })
