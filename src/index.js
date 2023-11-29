@@ -1,7 +1,7 @@
 const fs = require('fs');
 require('dotenv').config();
 const { Client, GatewayIntentBits, EmbedBuilder, PermissionsBitField, Collection, Events, ModalBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ButtonBuilder, ButtonStyle, TextInputBuilder, TextInputStyle, ActionRowBuilder, ChannelType } = require(`discord.js`);
-const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] }); 
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
 
 client.commands = new Collection();
 
@@ -78,8 +78,29 @@ client.on(Events.InteractionCreate, async interaction => {
                         .setFooter({ text: 'Ticket created' })
                         .addFields(
                             { name: 'User', value: `\`\`\`${customer}\`\`\`` },
-                            { name: 'Cart', value: `\`\`\`${cartItems.join('\n')}\`\`\`` }
+                            { name: 'Cart', value: `\`\`\`${getFormattedCartItems(cartItems)}\`\`\`` }
                         )
+
+                    // Format items in the cart to have quantity beside it
+                    function getFormattedCartItems(cartItems) {
+                        const cartFrequency = {}
+                        let formattedCartItems = ""
+                        
+                        for (let i = 0; i < cartItems.length; i++) {
+                            const item = cartItems[i]
+                            cartFrequency[item] = cartFrequency[item] ? cartFrequency[item] + 1 : 1
+                        }
+                        
+                        for (const [item, frequency] of Object.entries(cartFrequency)) {
+                            if (frequency > 1) {
+                                formattedCartItems += `${item} x${frequency}\n`
+                            } else {
+                                formattedCartItems += `${item}\n`
+                            }
+                        }
+                        
+                        return formattedCartItems.trim()
+                    }
 
                     // Cancel order button (closes ticket and clears customer's cart)
                     const closeBtn = new ButtonBuilder()
@@ -345,7 +366,7 @@ client.on('interactionCreate', async interaction => {
                 })
             }
         } else {
-            // If order file doesnt already exist, create it and set payment method property
+            // If order file doesn't already exist, create it and set payment method property
             const orderData = {
                 ign: null,
                 total: 0,
