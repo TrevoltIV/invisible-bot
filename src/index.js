@@ -23,7 +23,6 @@ var tickets = []
 // Create checkout ticket
 client.on(Events.InteractionCreate, async interaction => {
     if (interaction.isButton() && interaction.customId === 'ticketBtn') {
-
         const customer = interaction.user.username
 
         // Path to customer's cart file
@@ -31,99 +30,136 @@ client.on(Events.InteractionCreate, async interaction => {
 
         // Read customer cart file
         fs.readFile(filePath, 'utf8', async (err, data) => {
+
             if (err) {
-                await interaction.reply({
-                    content: `${interaction.user.tag}, you have no items in your cart! Please add some items before proceeding to checkout.`,
+                const reply = await interaction.reply({
+                    content: `You have no items in your cart! Please add some items before proceeding to checkout.`,
                     ephemeral: true
                 })
+
+                setTimeout(() => {
+                    reply.delete()
+                }, 5000)
             } else {
-                try {
-                    const cartData = JSON.parse(data)
 
-                    // Create new channel for the ticket
-                    const channel = await interaction.guild.channels.create({
-                        name: `ticket-${interaction.user.username}`,
-                        type: ChannelType.GuildText,
-                        parent: '1175554226097750096',
-                        permissionOverwrites: [
-                            {
-                                id: interaction.guild.id,
-                                deny: [PermissionsBitField.Flags.ViewChannel] // Deny access to other users that are not the customer
-                            },
-                            {
-                                id: interaction.user.id,
-                                allow: [PermissionsBitField.Flags.ViewChannel] // Allow access to the customer
-                            }
-                        ]
+                const itemListFileContent = fs.readFileSync('./src/catalog/items.json', 'utf8')
+                const itemList = JSON.parse(itemListFileContent)
+
+                const cartData = JSON.parse(data)
+
+                const isMinimumPrice = () => {
+                    let total = 0
+
+                    cartData.item_ids.map(item => {
+                        total += itemList[item].price
                     })
+                    console.log(total)
 
-                    const itemListFileContent = fs.readFileSync('./src/catalog/items.json', 'utf8')
-                    const itemList = JSON.parse(itemListFileContent)
-
-                    const cartItems = cartData.item_ids.map(itemId => {
-                        const itemName = itemList[itemId].name
-
-                        if (itemName) {
-                            return itemName
-                        } else {
-                            return `Item with ID ${itemId} not found in catalog`
-                        }
-                    })
-
-                    // Message to confirm contents of the cart
-                    const embed = new EmbedBuilder()
-                        .setTitle('Order Started')
-                        .setDescription('Please double-check that the order is correct.')
-                        .setTimestamp()
-                        .setFooter({ text: 'Ticket created' })
-                        .addFields(
-                            { name: 'User', value: `\`\`\`${customer}\`\`\`` },
-                            { name: 'Cart', value: `\`\`\`${getFormattedCartItems(cartItems)}\`\`\`` }
-                        )
-
-                    // Format items in the cart to have quantity beside it
-                    function getFormattedCartItems(cartItems) {
-                        const cartFrequency = {}
-                        let formattedCartItems = ""
-                        
-                        for (let i = 0; i < cartItems.length; i++) {
-                            const item = cartItems[i]
-                            cartFrequency[item] = cartFrequency[item] ? cartFrequency[item] + 1 : 1
-                        }
-                        
-                        for (const [item, frequency] of Object.entries(cartFrequency)) {
-                            if (frequency > 1) {
-                                formattedCartItems += `${item} x${frequency}\n`
-                            } else {
-                                formattedCartItems += `${item}\n`
-                            }
-                        }
-                        
-                        return formattedCartItems.trim()
+                    if (total >= 5) {
+                        return true
+                    } else {
+                        return false
                     }
+                }
 
-                    // Cancel order button (closes ticket and clears customer's cart)
-                    const closeBtn = new ButtonBuilder()
-                        .setLabel('Cancel Order')
-                        .setCustomId('closeTicket')
-                        .setStyle(ButtonStyle.Danger)
+                if (isMinimumPrice()) {
+                    try {
 
-                    // Confirm cart contents button
-                    const confirmBtn = new ButtonBuilder()
-                        .setLabel('Confirm')
-                        .setCustomId('confirmBtn')
-                        .setStyle(ButtonStyle.Primary)
-
-                    const row = new ActionRowBuilder().addComponents(closeBtn, confirmBtn)
-
-                    await channel.send({ embeds: [embed], components: [row] })
-
-                    await interaction.reply({
-                        content: `${interaction.user.tag}, your order has been successfully started! You can view it here ${channel}`,
+                        // Create new channel for the ticket
+                        const channel = await interaction.guild.channels.create({
+                            name: `ticket-${interaction.user.username}`,
+                            type: ChannelType.GuildText,
+                            parent: '1175554226097750096',
+                            permissionOverwrites: [
+                                {
+                                    id: interaction.guild.id,
+                                    deny: [PermissionsBitField.Flags.ViewChannel] // Deny access to other users that are not the customer
+                                },
+                                {
+                                    id: interaction.user.id,
+                                    allow: [PermissionsBitField.Flags.ViewChannel] // Allow access to the customer
+                                }
+                            ]
+                        })
+    
+                        const cartItems = cartData.item_ids.map(itemId => {
+                            const itemName = itemList[itemId].name
+    
+                            if (itemName) {
+                                return itemName
+                            } else {
+                                return `Item with ID ${itemId} not found in catalog`
+                            }
+                        })
+    
+                        // Message to confirm contents of the cart
+                        const embed = new EmbedBuilder()
+                            .setTitle('Order Started')
+                            .setDescription('Please double-check that the order is correct.')
+                            .setTimestamp()
+                            .setFooter({ text: 'Ticket created' })
+                            .addFields(
+                                { name: 'User', value: `\`\`\`${customer}\`\`\`` },
+                                { name: 'Cart', value: `\`\`\`${getFormattedCartItems(cartItems)}\`\`\`` }
+                            )
+    
+                        // Format items in the cart to have quantity beside it
+                        function getFormattedCartItems(cartItems) {
+                            const cartFrequency = {}
+                            let formattedCartItems = ""
+                            
+                            for (let i = 0; i < cartItems.length; i++) {
+                                const item = cartItems[i]
+                                cartFrequency[item] = cartFrequency[item] ? cartFrequency[item] + 1 : 1
+                            }
+                            
+                            for (const [item, frequency] of Object.entries(cartFrequency)) {
+                                if (frequency > 1) {
+                                    formattedCartItems += `${item} x${frequency}\n`
+                                } else {
+                                    formattedCartItems += `${item}\n`
+                                }
+                            }
+                            
+                            return formattedCartItems.trim()
+                        }
+    
+                        // Cancel order button (closes ticket and clears customer's cart)
+                        const closeBtn = new ButtonBuilder()
+                            .setLabel('Cancel Order')
+                            .setCustomId('closeTicket')
+                            .setStyle(ButtonStyle.Danger)
+    
+                        // Confirm cart contents button
+                        const confirmBtn = new ButtonBuilder()
+                            .setLabel('Confirm')
+                            .setCustomId('confirmBtn')
+                            .setStyle(ButtonStyle.Primary)
+    
+                        const row = new ActionRowBuilder().addComponents(closeBtn, confirmBtn)
+    
+                        await channel.send({ embeds: [embed], components: [row] })
+    
+                        const reply = await interaction.reply({
+                            content: `${interaction.user.tag}, your order has been successfully started! You can view it here ${channel}`,
+                            ephemeral: true
+                        })
+    
+                        setTimeout(() => {
+                            reply.delete()
+                        }, 5000)
+                    } catch (parseError) {
+                        console.error('Error parsing JSON data:', parseError)
+                    }
+                } else {
+                    const reply = await interaction.reply({
+                        content: 'Your cart is too small! Minimum purchase amount is $5.00 USD',
                         ephemeral: true
                     })
-                } catch (parseError) {
-                    console.error('Error parsing JSON data:', parseError)
+
+                    setTimeout(() => {
+                        reply.delete()
+                    }, 5000)
                 }
             }
         });
@@ -171,10 +207,8 @@ client.on(Events.InteractionCreate, async interaction => {
 
         if (userCart.item_ids.length >= 27) {
             // This code will create a different prompt because the order is too big for bot delivery
-            console.log('Order is too big for bot delivery')
             await interaction.reply({
-                content: `Your order is too big for instant bot delivery. I can only carry one ender chest at a time! I'll ping my boss so he can handle it. <@928898174721065000>`,
-                ephemeral: true
+                content: `Your order is too big for instant bot delivery. I can only carry one ender chest (27 shulkers) at a time! I'll ping my boss so he can handle it. <@928898174721065000>`
             })
         } else {
             // Create prompt for orders that are eligible for bot delivery (27 items or less)
@@ -252,10 +286,14 @@ client.on('interactionCreate', async interaction => {
         const itemListFileContent = fs.readFileSync(`./src/catalog/items.json`, 'utf8')
         const itemData = JSON.parse(itemListFileContent)
         const itemName = itemData[item].name
-        await interaction.reply({
+        const reply = await interaction.reply({
             content: `Added ${itemName} to your cart.`,
             ephemeral: true
         })
+
+        setTimeout(() => {
+            reply.delete()
+        }, 5000)
     }
 });
 
