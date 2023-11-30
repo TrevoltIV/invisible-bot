@@ -394,9 +394,34 @@ client.on('interactionCreate', async interaction => {
 
     if (customId === 'ignModal') {
         const orderFile = fs.readFileSync(`./src/orders/${customer}.json`)
-        const orderData = JSON.parse(orderFile)
+        const cartFile = fs.readFileSync(`./src/customer-carts/${customer}.json`)
+        const itemsFile = fs.readFileSync(`./src/catalog/items.json`)
+        let orderData = JSON.parse(orderFile)
+        let cartData = JSON.parse(cartFile)
+        let itemsData = JSON.parse(itemsFile)
+
+        let total = 0
+
+        cartData.item_ids.forEach((item) => {
+            total += itemsData[item].price
+        })
+
+        const formattedTotal = () => {
+            const num = Number(total.toString().match(/^\d+\.\d{0,2}/))
+            const str = num.toString()
+
+            if (str.length < 2) {
+                return total.toString() + '.00'
+            } else if (str.length < 4) {
+                return str + '0'
+            } else {
+                return str
+            }
+        }
 
         orderData.ign = interaction.fields.getTextInputValue('ignInput')
+        orderData.items = cartData.item_ids
+        orderData.total = formattedTotal()
         fs.writeFileSync(`./src/orders/${customer}.json`, JSON.stringify(orderData, null, 2), 'utf8')
 
         await interaction.channel.send({
@@ -408,26 +433,26 @@ client.on('interactionCreate', async interaction => {
         switch (orderData.payment_method) {
             case "paypal":
                 await interaction.reply({
-                    content: `Send $${orderData.total} using this PayPal link: https://www.paypal.me/Trevolt1, then type "done"`,
+                    content: `Send $${formattedTotal()} using this PayPal link: https://www.paypal.me/Trevolt1, then type "done"`,
                     ephemeral: true
                 })
                 break
             case "cashapp":
                 await interaction.reply({
-                    content: `Send $${orderData.total} to: $karstenkoer on Cashapp, then type "done"`,
+                    content: `Send $${formattedTotal()} to: $karstenkoer on Cashapp, then type "done"`,
                     ephemeral: true
                 })
                 break
             case "zelle":
                 await interaction.reply({
-                    content: `Send $${orderData.total} to (404) 695-6774 on Zelle, then type "done"`,
+                    content: `Send $${formattedTotal()} to (404) 695-6774 on Zelle, then type "done"`,
                     ephemeral: true
                 })
                 break
             case "crypto":
                 await interaction.reply({
                     content: `
-                        Send $${orderData.total} to one of the following crypto addresses, then type "done":\n
+                        Send $${formattedTotal()} to one of the following crypto addresses, then type "done":\n
                         Bitcoin: CURRENTLY DISABLED\n
                         Ethereum: CURRENTLY DISABLED\n
                         BTC Cash: CURRENTLY DISABLED\n
@@ -437,7 +462,7 @@ client.on('interactionCreate', async interaction => {
                 break
             case "gift-card":
                 await interaction.reply({
-                    content: `Send the gift card information in this channel, then type "done". (Note that only Visa and Amazon cards are accepted)`,
+                    content: `Send a gift card worth ${formattedTotal()}, then type "done". (Note that only Visa and Amazon cards are accepted)`,
                     ephemeral: true
                 })
                 break
