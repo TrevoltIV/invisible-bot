@@ -1,8 +1,8 @@
 const fs = require('fs')
+const path = require('path')
 const { SlashCommandBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, PermissionsBitField, PermissionFlagsBits } = require('discord.js');
+const DeliveryBot = require('../bots/DeliveryBot'); // Ajusta la ruta según tu estructura
 
-
-// Start delivery
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('deliver')
@@ -11,37 +11,70 @@ module.exports = {
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels),
     async execute(interaction) {
         const customer = interaction.channel.name.slice(7)
+        const orderPath = path.join(__dirname, '..', 'orders', `${customer}.json`)
 
-        if (fs.existsSync(`./src/orders/${customer}.json`)) {
-            const orderFile = fs.readFileSync(`./src/orders/${customer}.json`, 'utf8')
+        try {
+            // Verificar si el archivo de orden existe
+            if (!fs.existsSync(orderPath)) {
+                return await interaction.reply({
+                    content: 'Server Error: Order data unavailable.',
+                    ephemeral: true
+                });
+            }
+
+            // Leer datos de la orden
+            const orderFile = fs.readFileSync(orderPath, 'utf8')
             const orderData = JSON.parse(orderFile)
 
-            if (orderData.ign !== null && orderData.payment_method !== null && orderData.delivery_method !== null) {
+            // Validar que todos los campos necesarios estén completos
+            const requiredFields = ['ign', 'payment_method', 'delivery_method', 'items'];
+            const missingFields = requiredFields.filter(field => 
+                orderData[field] === null || orderData[field] === undefined
+            );
 
-                orderData.paid = true
-                fs.writeFileSync(`./src/orders/${customer}.json`, JSON.stringify(orderData, null, 2), 'utf8')
-
-                await interaction.channel.send({
-                    content: `
-                        Delivery bot is collecting your items, I'll notify you when it is ready for pickup!
-                        Please be ready to head to its coordinates (3k or less from spawn)
-                        ETA: 1-2 minutes
-                    `
-                })
-
-                await interaction.reply({
-                    content: 'Success!',
+            if (missingFields.length > 0) {
+                return await interaction.reply({
+                    content: `Server Error: Missing order fields - ${missingFields.join(', ')}`,
                     ephemeral: true
-                })
-            } else {
-                await interaction.reply({
-                    content: 'Server Error: Order data is not entirely filled.',
-                    ephemeral: true
-                })
+                });
             }
-        } else {
+
+            // Marcar orden como pagada
+            orderData.paid = true
+            orderData.status = 'processing'
+            fs.writeFileSync(orderPath, JSON.stringify(orderData, null, 2), 'utf8')
+
+            // Enviar mensaje al canal
+            await interaction.channel.send({
+                embeds: [
+                    new EmbedBuilder()
+                        .setTitle('Delivery en Progreso')
+                        .setDescription(`Delivery bot está recolectando tus items. ¡Te notificaré cuando esté listo para recoger!`)
+                        .addFields(
+                            { name: 'Cliente', value: customer },
+                            { name: 'Items', value: orderData.items.join(', ') },
+                            { name: 'ETA', value: '1-2 minutos' }
+                        )
+                        .setColor('#00FF00')
+                        .setTimestamp()
+                ]
+            })
+
+            // Iniciar bot de delivery
+            const deliveryBot = new DeliveryBot()
+            deliveryBot.startDelivery(customer)
+
+            // Respuesta de confirmación
             await interaction.reply({
-                content: 'Server Error: Order data unavailable.'
+                content: 'Delivery iniciado con éxito!',
+                ephemeral: true
+            })
+
+        } catch (error) {
+            console.error('Error en comando deliver:', error)
+            await interaction.reply({
+                content: 'Ocurrió un error al iniciar el delivery.',
+                ephemeral: true
             })
         }
     }
